@@ -14,7 +14,22 @@
     enter-active-class='anyName' to
     use it then in css
     -->
-    <transition name="para">
+    <!-- here we can listen when this <p> is about to enter
+       @before-enter="" and run some code 
+       revers of that is @before-leave=""
+       we also have @enter event wich we can listen
+       it triggered after before-enter
+       @after-enter triggers after enter 
+       same for @leave and @after-leave-->
+    <transition
+      name="para"
+      @before-enter="beforeEnter"
+      @before-leave="beforeLeave"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave"
+    >
       <p v-if="paraIsVisible">This is only sometimes visible</p>
     </transition>
     <button @click="toggleParagraph">Toggle Paragraph</button>
@@ -50,6 +65,34 @@ export default {
     };
   },
   methods: {
+    // @before-enter and @before-leave @enter  @after-enter
+    //listeners have default arguments
+    //el => element wich shows what element was animated
+    beforeEnter(el) {
+      console.log('before enter');
+      console.log(el);
+    },
+    enter(el) {
+      console.log('enter');
+      console.log(el);
+    },
+    afterEnter(el) {
+      console.log('afterEnter');
+      console.log(el);
+    },
+
+    beforeLeave(el) {
+      console.log('before leave');
+      console.log(el);
+    },
+    leave(el) {
+      console.log('leave');
+      console.log(el);
+    },
+    afterLeave(el) {
+      console.log('afterLeave');
+      console.log(el);
+    },
     showUsers() {
       this.usersAreVisible = true;
     },
