@@ -29,6 +29,8 @@
       @after-enter="afterEnter"
       @leave="leave"
       @after-leave="afterLeave"
+      @enter-cancelled="enterCancelled"
+      @leave-cancelled="leaveCancelled"
     >
       <p v-if="paraIsVisible">This is only sometimes visible</p>
     </transition>
@@ -62,19 +64,54 @@ export default {
       dialogIsVisible: false,
       paraIsVisible: false,
       usersAreVisible: false,
+      enterInterval: null,
+      leaveInterval: null,
     };
   },
   methods: {
+    enterCancelled(el) {
+      console.log(el);
+      clearInterval(this.enterInterval);
+    },
+    leaveCancelled(el) {
+      console.log(el);
+      clearInterval(this.leaveInterval);
+    },
     // @before-enter and @before-leave @enter  @after-enter
     //listeners have default arguments
     //el => element wich shows what element was animated
     beforeEnter(el) {
       console.log('before enter');
       console.log(el);
+      el.style.opacity = 0;
     },
-    enter(el) {
+    //done tells vue that after certain logic enter is done and
+    //we have to call it in our logic
+    enter(el, done) {
       console.log('enter');
       console.log(el);
+      let round = 1;
+      this.enterInterval = setInterval(() => {
+        el.style.opacity = round * 0.01;
+        round++;
+        if (round > 100) {
+          clearInterval(this.enterInterval);
+          done();
+        }
+      }, 20);
+    },
+    leave(el, done) {
+      console.log('leave');
+      console.log(el);
+      let round = 100;
+      this.leaveInterval = setInterval(() => {
+        el.style.opacity = round * 0.01;
+        round--;
+        if (round < 0) {
+          clearInterval(this.leaveInterval);
+          done();
+        }
+      }, 20);
     },
     afterEnter(el) {
       console.log('afterEnter');
@@ -83,10 +120,6 @@ export default {
 
     beforeLeave(el) {
       console.log('before leave');
-      console.log(el);
-    },
-    leave(el) {
-      console.log('leave');
       console.log(el);
     },
     afterLeave(el) {
@@ -160,15 +193,6 @@ button:active {
 .animate {
   /* transform: translateX(-150px); */
   animation: slide-fade 0.3s ease-out forwards;
-}
-
-.para-enter-active {
-  animation: slide-scale 0.3s ease-out;
-}
-
-.para-leave-active {
-  /* transition: all 0.3s ease-in; */
-  animation: slide-scale 0.3s ease-out;
 }
 
 .fade-button-enter-from,
