@@ -1,73 +1,15 @@
 <template>
-  <div class="container">
-    <users-list></users-list>
-  </div>
-  <div class="container">
-    <div class="block" :class="{ animate: animatedBlock }"></div>
-    <button @click="animateBlock">Animate</button>
-  </div>
-  <div class="container">
-    <!-- transition is build in method wich allows us to 
-    animate child element, transition must have 1 child element,
-    transition have own built in classes but it also can 
-    work with css animations.
-    also we can add name='anyName' and use it in css classes
-    .v-enter-to {} => .anyName-enter-to {}
-    and also we can describe in transition 
-    enter-active-class='anyName' to
-    use it then in css
-    -->
-    <!-- here we can listen when this <p> is about to enter
-       @before-enter="" and run some code 
-       revers of that is @before-leave=""
-       we also have @enter event wich we can listen
-       it triggered after before-enter
-       @after-enter triggers after enter 
-       same for @leave and @after-leave,
-       this methods are emmited no matter if you control
-       your animation or not-->
-    <!--:css=false tels vue that this <p> will not use css,
-      entire transition will be controlled through javascript
-       -->
-    <transition
-      :css="false"
-      @before-enter="beforeEnter"
-      @before-leave="beforeLeave"
-      @enter="enter"
-      @after-enter="afterEnter"
-      @leave="leave"
-      @after-leave="afterLeave"
-      @enter-cancelled="enterCancelled"
-      @leave-cancelled="leaveCancelled"
-    >
-      <p v-if="paraIsVisible">This is only sometimes visible</p>
+  <!--to animate switches between routes we need this syntac 
+  v-slot and slotProps -->
+  <router-view v-slot="slotProps">
+    <transition name="route" mode="out-in">
+      <component :is="slotProps.Component"></component>
     </transition>
-    <button @click="toggleParagraph">Toggle Paragraph</button>
-  </div>
-  <div class="container">
-    <!--we can use transition wit v-if-else statement when
-    there is 2 element but one of them will be always on UI 
-    mode controls whether firs element has to be animated
-    or leaving element-->
-    <transition name="fade-button" mode="out-in">
-      <button @click="showUsers" v-if="!usersAreVisible">Show users</button>
-      <button @click="hideUsers" v-else>Hide users</button>
-    </transition>
-  </div>
-  <!--we can use transition on custom components too -->
-  <base-modal @close="hideDialog" :open="dialogIsVisible">
-    <p>This is a test dialog!</p>
-    <button @click="hideDialog">Close it!</button>
-  </base-modal>
-  <div class="container">
-    <button @click="showDialog">Show Dialog</button>
-  </div>
+  </router-view>
 </template>
 
 <script>
-import UsersList from './components/UsersList.vue';
 export default {
-  components: { UsersList },
   data() {
     return {
       animatedBlock: false,
@@ -219,6 +161,17 @@ button:active {
 .fade-button-enter-to,
 .fade-button-leave-from {
   opacity: 1;
+}
+
+.route-enter-from {
+}
+.route-enter-active {
+  animation: slide-scale 0.4s ease-out;
+}
+.route-enter-to {
+}
+.router-leave-active {
+  animation: slide-scale 0.4s ease-in;
 }
 
 @keyframes slide-scale {
