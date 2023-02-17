@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <users-list></users-list>
+  </div>
+  <div class="container">
     <div class="block" :class="{ animate: animatedBlock }"></div>
     <button @click="animateBlock">Animate</button>
   </div>
@@ -20,9 +23,14 @@
        we also have @enter event wich we can listen
        it triggered after before-enter
        @after-enter triggers after enter 
-       same for @leave and @after-leave-->
+       same for @leave and @after-leave,
+       this methods are emmited no matter if you control
+       your animation or not-->
+    <!--:css=false tels vue that this <p> will not use css,
+      entire transition will be controlled through javascript
+       -->
     <transition
-      name="para"
+      :css="false"
       @before-enter="beforeEnter"
       @before-leave="beforeLeave"
       @enter="enter"
@@ -57,7 +65,9 @@
 </template>
 
 <script>
+import UsersList from './components/UsersList.vue';
 export default {
+  components: { UsersList },
   data() {
     return {
       animatedBlock: false,
